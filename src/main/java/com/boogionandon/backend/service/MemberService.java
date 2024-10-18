@@ -2,7 +2,9 @@ package com.boogionandon.backend.service;
 
 import com.boogionandon.backend.domain.Member;
 import com.boogionandon.backend.dto.AdminUpdateDTO;
+import com.boogionandon.backend.dto.BulkDeleteRequestDTO;
 import com.boogionandon.backend.dto.WorkerUpdateDTO;
+import com.boogionandon.backend.dto.WorkerUpdateEndDateRequestDTO;
 import com.boogionandon.backend.dto.admin.AdminDetailResponseDTO;
 import com.boogionandon.backend.dto.admin.WorkerDetailResponseDTO;
 import com.boogionandon.backend.dto.member.AdminResponseDTO;
@@ -31,4 +33,8 @@ public interface MemberService {
     void confirmOldPassword(Long memberId, String oldPassword);
     
     void changePassword(Long memberId, String newPassword, String newConfirmPassword);
+    
+    void softDeleteMembers(BulkDeleteRequestDTO requestDTO);
+    
+    void updateWorkerEndDate(Long workerId, WorkerUpdateEndDateRequestDTO requestDTO);
 }

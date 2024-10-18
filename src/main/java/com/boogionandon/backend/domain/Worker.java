@@ -17,23 +17,31 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-public class Worker extends Member{
-
-  @Column(nullable = false)
-  private LocalDate birth;
-
-  @Column
-  private Double vehicleCapacity; // 차량정보(무게 ton)
-
-  // 추가로 필요한 필드가 있다면 추가
-
-  @Column(nullable = false)
-  private LocalDate startDate; // 관리자가 등록해주는 할 수 있는 일자 (시작)
-
-  @Column(nullable = false)
-  private LocalDate endDate; // 관리자가 등록해주는 할 수 있는 일자 (종료)
-
-  public void updateVehicleCapacity(Double vehicleCapacity) {
-    this.vehicleCapacity = vehicleCapacity;
-  }
+public class Worker extends Member {
+    
+    @Column(nullable = false)
+    private LocalDate birth;
+    
+    @Column
+    private Double vehicleCapacity; // 차량정보(무게 ton)
+    
+    // 추가로 필요한 필드가 있다면 추가
+    
+    @Column(nullable = false)
+    private LocalDate startDate; // 관리자가 등록해주는 할 수 있는 일자 (시작)
+    
+    @Column(nullable = false)
+    private LocalDate endDate; // 관리자가 등록해주는 할 수 있는 일자 (종료)
+    
+    public void updateVehicleCapacity(Double vehicleCapacity) {
+        this.vehicleCapacity = vehicleCapacity;
+    }
+    
+    public void updateEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+    
+    public void updateStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 }

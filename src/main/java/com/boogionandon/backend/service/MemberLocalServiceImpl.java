@@ -5,7 +5,9 @@ import com.boogionandon.backend.domain.Admin;
 import com.boogionandon.backend.domain.Member;
 import com.boogionandon.backend.domain.Worker;
 import com.boogionandon.backend.dto.AdminUpdateDTO;
+import com.boogionandon.backend.dto.BulkDeleteRequestDTO;
 import com.boogionandon.backend.dto.WorkerUpdateDTO;
+import com.boogionandon.backend.dto.WorkerUpdateEndDateRequestDTO;
 import com.boogionandon.backend.dto.admin.AdminDetailResponseDTO;
 import com.boogionandon.backend.dto.admin.WorkerDetailResponseDTO;
 import com.boogionandon.backend.dto.admin.WorkerDetailResponseDTO.WorkerDetailResponseDTOBuilder;
@@ -277,6 +279,33 @@ public class MemberLocalServiceImpl implements MemberService {
         }
         
         findMember.changePassword(passwordEncoder.encode(newPassword));
+    }
+    
+    @Override
+    public void softDeleteMembers(BulkDeleteRequestDTO requestDTO) {
+        
+        for (Long id : requestDTO.getIds()) {
+            Member findMember = memberRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다. : " + id));
+            
+            findMember.turnSoftDelete();
+        }
+        
+    }
+    
+    @Override
+    public void updateWorkerEndDate(Long workerId, WorkerUpdateEndDateRequestDTO requestDTO) {
+        
+        Worker findWorker = (Worker) memberRepository.findById(workerId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다. : " + workerId));
+        
+        if (requestDTO.getStartDate() == null || requestDTO.getEndDate() == null) {
+            throw new CustomException("시작일과 종료일을 입력하세요.");
+        }
+        
+        findWorker.updateStartDate(requestDTO.getStartDate());
+        findWorker.updateEndDate(requestDTO.getEndDate());
+        
     }
     
     private boolean isValidPassword(String password) {
