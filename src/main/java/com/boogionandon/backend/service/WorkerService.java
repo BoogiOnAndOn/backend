@@ -6,10 +6,12 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface WorkerService {
-
-  List<String> findSortedWorkerNameListWithWorkerId(Long workerId);
-
-  void createOneWorker(Long adminId, CreateWorkerRequestDTO createWorkerRequestDTO);
-
-  List<CreateWorkerRequestDTO> exelToDTOList(MultipartFile exel) throws IOException;
+    
+    List<String> findSortedWorkerNameListWithWorkerId(Long workerId);
+    
+    void createOneWorker(Long adminId, CreateWorkerRequestDTO createWorkerRequestDTO);
+    
+    List<CreateWorkerRequestDTO> exelToDTOList(MultipartFile exel) throws IOException;
+    
+    void softDeleteExpiredWorkers();
 }
