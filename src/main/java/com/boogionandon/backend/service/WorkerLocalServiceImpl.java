@@ -163,7 +163,7 @@ public class WorkerLocalServiceImpl implements WorkerService {
     // 매일 자정에 코드가 자동으로 실행이 되어서 Worker의 endDate가 끝났으면 delFlag가 true로 바뀌는 코드
     // 자정일 때 실행이 되고 있어야 실행 되는 코드
     @Override
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    @Scheduled(cron = "0 0 13 * * ?") // 매일 자정에 실행
     public void softDeleteExpiredWorkers() {
         LocalDate currentDate = LocalDate.now();
         
