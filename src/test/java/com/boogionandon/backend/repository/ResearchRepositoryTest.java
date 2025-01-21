@@ -19,11 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -152,7 +148,7 @@ class ResearchRepositoryTest {
         
         Random random = new Random();
         
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             Worker randomResearcher = researchers.get(random.nextInt(researchers.size()));
             
             Admin managedAdmin = (Admin) memberRepository.findById(randomResearcher.getManagerId())
@@ -199,8 +195,7 @@ class ResearchRepositoryTest {
                     randomDate,
                     LocalTime.of(random.nextInt(24), random.nextInt(60))
             );
-            
-            int randomNumber = random.nextInt(1, 27) + 3;
+            /*int randomNumber = random.nextInt(1, 27) + 3;
             List<Image> images = new ArrayList<>();
             for (int j = 0; j < randomNumber; j++) {
                 Image image = Image.builder()
@@ -208,8 +203,43 @@ class ResearchRepositoryTest {
                         .ord(i)
                         .build();
                 images.add(image);
+            }*/
+
+            List<String> fileNames = Arrays.asList(
+                "test_1.jpg", "test_2.jpg", "test_3.jpg", "test_4.jpg",
+                "test_5.jpg", "test_6.jpg", "test_7.jpg", "test_8.jpg"
+            );
+
+            // randomNumber를 3-6으로 제한 (중복없는 ord 값 보장을 위해)
+            int randomNumber = random.nextInt(4) + 3; // 3,4,5,6 중 하나
+
+            Collections.shuffle(fileNames);
+            List<String> selectedFileNames = fileNames.stream()
+                .limit(randomNumber)
+                .collect(Collectors.toList());
+
+            // 중복없는 ord 값 생성 (3-8 범위에서)
+            Set<Integer> ordSet = new HashSet<>();
+            while (ordSet.size() < randomNumber) {
+                ordSet.add(random.nextInt(3, 9));
             }
-            
+            List<Integer> ordValues = new ArrayList<>(ordSet);
+            Collections.shuffle(ordValues);
+
+            List<Image> images = new ArrayList<>();
+            try {
+                for (int j = 0; j < randomNumber; j++) {
+                    Image image = Image.builder()
+                        .fileName(selectedFileNames.get(j))
+                        .ord(ordValues.get(j))
+                        .build();
+                    images.add(image);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error during image creation: " + e.getMessage());
+            }
+
             String[] weatherOptions = {"맑음", "흐림", "비", "눈", "안개"};
             String randomWeather = weatherOptions[random.nextInt(weatherOptions.length)];
             

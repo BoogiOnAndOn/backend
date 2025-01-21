@@ -17,11 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -190,24 +186,69 @@ class CleanRepositoryTest {
                     randomDate,
                     LocalTime.of(random.nextInt(24), random.nextInt(60))
             );
-            
-            int beforeRandomNumber = random.nextInt(13) + 3;
-            int afterRandomNumber = random.nextInt(13) + 3;
+
+            /* B_ A_ 붙여서 또 만들고 S_B S_A 붙여서 또 넣고 코드 바꾸기 */
+            List<String> beforeFileNames = Arrays.asList(
+                    "B_test_1.jpg", "B_test_2.jpg", "B_test_3.jpg", "B_test_4.jpg",
+                    "B_test_5.jpg", "B_test_6.jpg", "B_test_7.jpg", "B_test_8.jpg"
+            );
+
+            List<String> afterFileNames = Arrays.asList(
+                    "A_test_1.jpg", "A_test_2.jpg", "A_test_3.jpg", "A_test_4.jpg",
+                    "A_test_5.jpg", "A_test_6.jpg", "A_test_7.jpg", "A_test_8.jpg"
+            );
+
+            // randomNumber를 3-6으로 제한 (중복없는 ord 값 보장을 위해)
+            int beforeRandomNumber = random.nextInt(4) + 3; // 3,4,5,6 중 하나
+            int afterRandomNumber = random.nextInt(4) + 3; // 3,4,5,6 중 하나
+
+            Collections.shuffle(beforeFileNames);
+            List<String> selectedFileNames = beforeFileNames.stream()
+                    .limit(beforeRandomNumber)
+                    .collect(Collectors.toList());
+
+            Collections.shuffle(afterFileNames);
+            List<String> selectedFileNames2 = afterFileNames.stream()
+                    .limit(afterRandomNumber)
+                    .collect(Collectors.toList());
+
+            // 중복없는 ord 값 생성 (3-8 범위에서)
+            Set<Integer> ordSet = new HashSet<>();
+            while (ordSet.size() < beforeRandomNumber) {
+                ordSet.add(random.nextInt(3, 9));
+            }
+            List<Integer> ordValues = new ArrayList<>(ordSet);
+            Collections.shuffle(ordValues);
+
+            // 중복없는 ord 값 생성 (3-8 범위에서)
+            Set<Integer> ordSet2 = new HashSet<>();
+            while (ordSet2.size() < afterRandomNumber) {
+                ordSet2.add(random.nextInt(3, 9));
+            }
+            List<Integer> ordValues2 = new ArrayList<>(ordSet2);
+            Collections.shuffle(ordValues2);
+
             List<Image> images = new ArrayList<>();
-            for (int j = 0; j < beforeRandomNumber; j++) {
-                Image image = Image.builder()
-                        .fileName("B_20241006005731_test.jpeg")
-                        .ord(i)
-                        .build();
-                images.add(image);
+            try {
+                for (int j = 0; j < beforeRandomNumber; j++) {
+                    Image image = Image.builder()
+                            .fileName(selectedFileNames.get(j))
+                            .ord(ordValues.get(j))
+                            .build();
+                    images.add(image);
+                }
+                for(int j = 0; j < afterRandomNumber; j++){
+                    Image image = Image.builder()
+                            .fileName(selectedFileNames2.get(j))
+                            .ord(ordValues2.get(j))
+                            .build();
+                    images.add(image);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error during image creation: " + e.getMessage());
             }
-            for (int j = 0; j < afterRandomNumber; j++) {
-                Image image = Image.builder()
-                        .fileName("A_20241006005731_test.jpeg")
-                        .ord(i)
-                        .build();
-                images.add(image);
-            }
+
             double randomOffset = (random.nextDouble() - 0.5) * 0.002; // 대략 100-200 meters
             
             double startLat = randomBeach.getLatitude() + randomOffset;
@@ -223,7 +264,7 @@ class CleanRepositoryTest {
             
             String[] specialNotes = {"없음", "태풍", "홍수", "집중호우", "폭풍 해일"};
             String randomSpecialNote = specialNotes[random.nextInt(specialNotes.length)];
-            
+
             Clean clean = Clean.builder()
                     .cleaner(randomCleaner)
                     .beach(randomBeach)
